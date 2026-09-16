@@ -7,6 +7,9 @@
     <Prefer32Bit>true</Prefer32Bit>
     <AssemblyName>AutoGiaLapLD</AssemblyName>
     <RootNamespace>AutoGiaLapLD</RootNamespace>
+    <Version>0.1.0</Version>
+    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
     <LangVersion>latest</LangVersion>
     <Deterministic>true</Deterministic>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
