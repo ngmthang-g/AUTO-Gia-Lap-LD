@@ -1,5 +1,6 @@
 using System;
 using System.Windows.Forms;
+using AutoGiaLapLD.UI;
 
 namespace AutoGiaLapLD
 {
@@ -13,7 +14,9 @@ namespace AutoGiaLapLD
                 return SelfTests.RunAll() ? 0 : 1;
             }
 
-            MessageBox.Show("V0.1 production UI is not implemented in the RED test commit.", "AUTO Gia Lap LD");
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new MainForm());
             return 0;
         }
     }
