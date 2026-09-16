@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using AutoGiaLapLD.Core;
+using AutoGiaLapLD.Services;
 
 namespace AutoGiaLapLD
 {
@@ -37,6 +38,16 @@ namespace AutoGiaLapLD
                     new Size(1000, 800), new Size(800, 600), new Point(500, 10), out mapped));
             });
 
+            ok &= Run(results, "packs XY into LPARAM", () =>
+            {
+                IntPtr packed = KAutoCompat.MakeLParamFromXY(321, 654);
+                long value = packed.ToInt64() & 0xFFFFFFFFL;
+                int x = (int)(value & 0xFFFF);
+                int y = (int)((value >> 16) & 0xFFFF);
+                AssertEqual(321, x);
+                AssertEqual(654, y);
+            });
+
             File.WriteAllLines("selftest-results.txt", results.ToArray());
             return ok;
         }
@@ -67,6 +78,12 @@ namespace AutoGiaLapLD
         }
 
         private static void AssertEqual(Point expected, Point actual)
+        {
+            if (expected != actual)
+                throw new InvalidOperationException("expected " + expected + " but got " + actual);
+        }
+
+        private static void AssertEqual(int expected, int actual)
         {
             if (expected != actual)
                 throw new InvalidOperationException("expected " + expected + " but got " + actual);
