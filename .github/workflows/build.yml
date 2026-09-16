@@ -1,0 +1,45 @@
+name: Build AUTO Gia Lap LD
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore and build
+        shell: powershell
+        run: |
+          msbuild src\AutoGiaLapLD\AutoGiaLapLD.csproj /restore /p:Configuration=Release /m
+
+      - name: Run self tests
+        shell: powershell
+        run: |
+          $exe = (Resolve-Path "src\AutoGiaLapLD\bin\Release\net48\AutoGiaLapLD.exe").Path
+          $proc = Start-Process -FilePath $exe -ArgumentList "--self-test" -Wait -PassThru
+          if (Test-Path "selftest-results.txt") { Get-Content "selftest-results.txt" }
+          if ($proc.ExitCode -ne 0) { exit $proc.ExitCode }
+
+      - name: Prepare artifact
+        if: success()
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Force -Path artifact | Out-Null
+          Copy-Item "src\AutoGiaLapLD\bin\Release\net48\AutoGiaLapLD.exe" "artifact\AUTO-Gia-Lap-LD-v0.1.exe"
+          Copy-Item "README.md" "artifact\README.md"
+
+      - name: Upload artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: AUTO-Gia-Lap-LD-v0.1-win-x86
+          path: artifact
+          if-no-files-found: error
