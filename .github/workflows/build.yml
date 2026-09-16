@@ -23,11 +23,10 @@ jobs:
       - name: Run self tests
         shell: powershell
         run: |
-          $exe = Resolve-Path "src\AutoGiaLapLD\bin\Release\net48\AutoGiaLapLD.exe"
-          & $exe --self-test
-          $code = $LASTEXITCODE
+          $exe = (Resolve-Path "src\AutoGiaLapLD\bin\Release\net48\AutoGiaLapLD.exe").Path
+          $proc = Start-Process -FilePath $exe -ArgumentList "--self-test" -Wait -PassThru
           if (Test-Path "selftest-results.txt") { Get-Content "selftest-results.txt" }
-          if ($code -ne 0) { exit $code }
+          if ($proc.ExitCode -ne 0) { exit $proc.ExitCode }
 
       - name: Prepare artifact
         if: success()
